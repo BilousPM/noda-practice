@@ -6,7 +6,13 @@
   "type": "module",
   "scripts": {
     "generate": "node src/scripts/generateProduct",
+    "total-price": "node src/scripts/getTotalPrice",
+    "check-category": "node src/scripts/checkCategory",
     "expensive": "node src/scripts/getExpensiveProduct",
+    "transform-array": "node src/scripts/transformArray",
+    "create-files": "node src/scripts/createFiles",
+    "group-products": "node src/scripts/groupProducts",
+    "get-files": "node src/scripts/getFiles",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
