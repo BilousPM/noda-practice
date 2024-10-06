@@ -7,7 +7,7 @@ import {
 } from '../services/products.js';
 
 export const getAllProductsController = async (req, res) => {
-  const data = await getAllProducts();
+  const data = await getAllProducts(req.user._id);
 
   res.status(200).json({
     status: 200,
@@ -17,7 +17,7 @@ export const getAllProductsController = async (req, res) => {
 };
 
 export const createProductController = async (req, res) => {
-  const newProduct = await createProduct(req.body);
+  const newProduct = await createProduct({ ...req.body, userId: req.user._id });
 
   res.status(201).json({
     status: 201,
@@ -28,7 +28,7 @@ export const createProductController = async (req, res) => {
 
 export const deleteProductByIdController = async (req, res) => {
   const productId = req.params.productId;
-  const removedProduct = await deleteProductById(productId);
+  const removedProduct = await deleteProductById(productId, req.user._id);
 
   if (!removedProduct) {
     throw createHttpError(404, 'Product is not found');
