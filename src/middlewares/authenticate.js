@@ -1,5 +1,7 @@
 import createHttpError from 'http-errors';
-import { findSessionByToken, findUserById } from '../services/user.js';
+import { findUserById } from '../services/user.js';
+import jwt from 'jsonwebtoken';
+import { env } from '../utils/env.js';
 
 export const authenticate = async (req, res, next) => {
   const authorization = req.get('Authorization');
@@ -14,19 +16,11 @@ export const authenticate = async (req, res, next) => {
     return next(createHttpError(401, 'Unauthorized'));
   }
 
-  const session = await findSessionByToken(token);
-  if (!session) {
-    return next(createHttpError(401, 'Unauthorized'));
-  }
+  const { id } = jwt.verify(token, env('JWT_SECRET'));
 
-  const isTokenExpired = new Date() > new Date(session.accessTokenValidUntil);
-  if (isTokenExpired) {
-    return next(createHttpError(401, 'Unauthorized'));
-  }
+  const user = await findUserById(id);
 
-  const user = await findUserById(session.userId);
-
-  if (!user) {
+  if (!user || !user.token) {
     return next(createHttpError(401, 'Unauthorized'));
   }
 

@@ -8,7 +8,7 @@ export const findUserByEmail = (email) =>
     email,
   });
 
-// export const findUserById = (userId) => UserCollection.findById(userId);
+export const findUserById = (userId) => UserCollection.findById(userId);
 
 // export const findSessionByToken = (token) =>
 //   SessionCollection.findOne({ accessToken: token });
@@ -35,6 +35,10 @@ export const createUser = async (userData) => {
     password,
   });
   return updateUserWithToken(user._id);
+};
+
+export const logoutUser = async (userId) => {
+  UserCollection.findByIdAndUpdate(userId, { token: '' });
 };
 
 // export const createActiveSession = async (userId) => {

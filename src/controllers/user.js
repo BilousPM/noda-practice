@@ -3,6 +3,8 @@ import {
   findUserByEmail,
   createUser,
   updateUserWithToken,
+  findUserById,
+  logoutUser,
 } from '../services/user.js';
 import bcrypt from 'bcrypt';
 
@@ -37,5 +39,20 @@ export const loginUserController = async (req, res) => {
   res.status(200).json({
     token,
     user: { name, email },
+  });
+};
+
+export const logoutController = async (req, res) => {
+  const userId = req.user.id;
+  await logoutUser(userId);
+
+  res.sendStatus(204);
+};
+
+export const refreshUser = (req, res) => {
+  const { name, email } = req.user;
+  res.json({
+    name,
+    email,
   });
 };
