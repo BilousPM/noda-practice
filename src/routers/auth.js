@@ -10,7 +10,7 @@ import {
 const authRouter = Router();
 
 authRouter.post(
-  '/register',
+  '/signup',
   validateBody(registerSchema),
   ctrlWrapper(registerUserController),
 );
