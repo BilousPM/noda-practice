@@ -2,27 +2,25 @@ import createHttpError from 'http-errors';
 import {
   findUserByEmail,
   createUser,
-  createActiveSession,
+  updateUserWithToken,
 } from '../services/user.js';
 import bcrypt from 'bcrypt';
-import { refreshTokenLifetime } from '../constants/constants.js';
 
 export const registerUserController = async (req, res) => {
   const { email, name } = req.body;
 
   const user = await findUserByEmail(email);
   if (user) throw createHttpError(409, 'Email in use');
-  await createUser(req.body);
-
+  const { token } = await createUser(req.body);
   res.status(201).json({
-    status: 201,
-    message: 'Successfully registered a user!',
-    data: { email, name },
+    token,
+    user: { name, email },
   });
 };
 
 export const loginUserController = async (req, res) => {
   const user = await findUserByEmail(req.body.email);
+  const { name, email } = user;
   if (!user) {
     throw createHttpError(401, 'Wrong credentials');
   }
@@ -34,21 +32,10 @@ export const loginUserController = async (req, res) => {
   if (!isCorrectPassword) {
     throw createHttpError(401, 'Wrong credentials');
   }
-  const session = await createActiveSession(user._id);
 
-  res.cookie('refreshToken', session.refreshToken, {
-    httpOnly: true,
-    expires: new Date(Date.now() + refreshTokenLifetime),
-  });
-
-  res.cookie('sessionId', session._id, {
-    httpOnly: true,
-    expires: new Date(Date.now() + refreshTokenLifetime),
-  });
-
-  res.json({
-    status: 200,
-    message: 'Successfully logged in an user!',
-    data: { accessToken: session.accessToken },
+  const { token } = await updateUserWithToken(user._id);
+  res.status(200).json({
+    token,
+    user: { name, email },
   });
 };
