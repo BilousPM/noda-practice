@@ -4,9 +4,11 @@ import { validateBody } from '../utils/validateBody.js';
 import { ctrlWrapper } from '../utils/ctrlWrapper.js';
 import {
   loginUserController,
+  logoutController,
+  refreshUser,
   registerUserController,
 } from '../controllers/user.js';
-
+import { authenticate } from '../middlewares/authenticate.js';
 const authRouter = Router();
 
 authRouter.post(
@@ -20,5 +22,8 @@ authRouter.post(
   validateBody(loginSchema),
   ctrlWrapper(loginUserController),
 );
+
+authRouter.post('/logout', authenticate, ctrlWrapper(logoutController));
+authRouter.get('/current', authenticate, ctrlWrapper(refreshUser));
 
 export default authRouter;
